@@ -9,7 +9,6 @@ import os
 import requests
 import json
 import random
-#from keep_alive import keep_alive
 import pandas as pd
 import numpy as np
 import re
@@ -44,7 +43,7 @@ def get_question(user_id):
     #update user's history
     sessions = sessions.append([{"user_id": user_id, "type_id":type_id, "question_id": row_id}],ignore_index=True) 
     
-    if len(sessions.loc[sessions["user_id"] == user_id]) >= 4:
+    if len(sessions.loc[sessions["user_id"] == user_id]) >= 5:
         old = min(list(sessions.loc[sessions["user_id"] == user_id].index.values))
         sessions = sessions.drop(old)
         sessions = sessions.reset_index(drop=True)
@@ -77,7 +76,7 @@ async def on_message(message):
     #if any(word in msg for word in sad_words):
       #await message.channel.send(random.choice(options))
   
-  if msg.startswith('$ask'):     
+  if msg.startswith('ask'):     
 
     user_id = message.author
     if user_id not in list(sessions["user_id"]): 
@@ -87,7 +86,7 @@ async def on_message(message):
     
     await message.channel.send(question)
 
-  if msg.startswith('$dislike'): 
+  if msg.startswith('dislike'): 
 
     bot_message = 'Noted'
     user_id = message.author
@@ -97,14 +96,14 @@ async def on_message(message):
 
     await message.channel.send(bot_message)
 
-  if msg.startswith('$add'): 
+  if msg.startswith('add'): 
 
     bot_message = 'Please pick a category or add a new one by typing **$new *category_name***. \nCurrently, I have:\n' + '\n'.join(types) + '.'
 
     #here I need to save the question 
     await message.channel.send(bot_message)
 
-  if msg not in ['$ask', '$add', '$dislike']:
+  if msg not in ['ask', '$dd', 'dislike']:
     
     bot_message = 'Hi ' + str(message.author) + ',\n' + 'I can ask you behavioral questions, just type **$ask**. If you do not like the question, just type **$dislike** after it. If you have the question you want to add then type **$add *question itself***.'
   
@@ -113,24 +112,4 @@ async def on_message(message):
   questions.to_csv('db.csv', index=False)
   sessions.to_csv('sessions.csv', index=False)
 
-#keep_alive()
 client.run(token)
-
-
-# In[5]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
